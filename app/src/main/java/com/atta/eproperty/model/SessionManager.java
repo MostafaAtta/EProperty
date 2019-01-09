@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.atta.eproperty.MainActivity;
+import com.atta.eproperty.Main2Activity;
 import com.atta.eproperty.login.LoginActivity;
 
 public class SessionManager {
@@ -90,6 +90,12 @@ public class SessionManager {
         return pref.getString(KEY_PASSWORD, "no password");
     }
 
+
+    // Get Login State
+    public String  getPhone(){
+        return pref.getString(KEY_USER_PHONE, "no phone");
+    }
+
     /**
      * Create login session
      * */
@@ -104,9 +110,6 @@ public class SessionManager {
         editor.putString(KEY_USER_NAME, user.getName());
         editor.putString(KEY_EMAIL, user.getEmail());
         editor.putString(KEY_USER_PHONE, user.getPhone());
-        editor.putString(KEY_USER_LOCATION, user.getLocation());
-        editor.putString(KEY_ORDER_LOCATION, user.getLocation());
-        editor.putString(KEY_USER_BIRTHDAY, user.getBirthday());
         editor.apply();
 
 
@@ -141,7 +144,7 @@ public class SessionManager {
         if(this.isLoggedIn()){
 
             // user is logged in redirect him to Main Activity
-            Intent i = new Intent(_context, MainActivity.class);
+            Intent i = new Intent(_context, Main2Activity.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -153,7 +156,7 @@ public class SessionManager {
 
         }else if (this.isSkipped()){
             // user is logged in redirect him to Main Activity
-            Intent i = new Intent(_context, MainActivity.class);
+            Intent i = new Intent(_context, Main2Activity.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -189,19 +192,8 @@ public class SessionManager {
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.putBoolean(IS_LOGIN, false);
-        editor.putBoolean(IS_SKIPPED, false);
         editor.commit();
 
-        // After logout redirect user to Loing Activity
-        Intent i = new Intent(_context, LoginActivity.class);
-        // Closing all the Activities
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        // Add new Flag to start new Activity
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        // Staring Login Activity
-        _context.startActivity(i);
     }
 
     /**

@@ -17,9 +17,7 @@ public interface APIService {
             @Field("name") String name,
             @Field("email") String email,
             @Field("password") String password,
-            @Field("phone") String phone,
-            @Field("birthday") String birthday,
-            @Field("location") String location
+            @Field("phone") String phone
     );
 
 
@@ -31,10 +29,14 @@ public interface APIService {
             @Field("password") String password
     );
 
+    @POST("get_properties")
+    Call<Properties> getProperties(
+    );
+
     //the image call
     @retrofit.http.GET("images/{imageName}")
     retrofit.Call<ResponseBody> getImageDetails(
-            @retrofit.http.Path("imageName") String imageName);
+            @retrofit.http.Path("imageName")  String imageName);
 
 
 }

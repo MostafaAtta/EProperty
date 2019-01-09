@@ -33,4 +33,19 @@
     <string name="login_to">Login and Explore</string>
     <string name="register_later">register later</string>
     <string name="birth_date">Birth Date</string>
+    <string name="title_activity_main">E Property</string>
+
+    <string name="title_search">Search</string>
+    <string name="title_saved">Favorites</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_add">Add</string>
+    <string name="login_hint">Login or register to be able to add new properties sync your favorites properties</string>
+    <string name="register_text">Register to be able to add new properties save favorites properties</string>
+
+    <string-array name="types">
+        <item>Select Your Property type…</item>
+        <item>Apartment</item>
+        <item>Villa</item>
+        <item>Chalet</item>
+    </string-array>
 </resources>

@@ -15,10 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.atta.eproperty.MainActivity;
 import com.atta.eproperty.R;
-import com.atta.eproperty.RegisterActivity;
+import com.atta.eproperty.main.MainActivity;
 import com.atta.eproperty.model.SessionManager;
+import com.atta.eproperty.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View ,View.OnClickListener, CompoundButton.OnCheckedChangeListener{
 

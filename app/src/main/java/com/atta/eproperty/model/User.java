@@ -7,35 +7,27 @@ public class User {
     private String email;
     private String password;
     private String phone;
-    private String birthday;
-    private String location;
 
-    public User(String username, String email, String password, String phone, String birthday, String location) {
+    public User(String username, String email, String password, String phone) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.phone = phone;
-        this.birthday = birthday;
-        this.location = location;
     }
 
-    public User(int id, String username, String email, String phone, String birthday, String location){
+    public User(int id, String username, String email, String phone) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.phone = phone;
-        this.birthday = birthday;
-        this.location = location;
     }
 
-    public User(int id, String username, String email, String password, String phone, String birthday, String location) {
+    public User(int id, String username, String email, String password, String phone) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.phone = phone;
-        this.birthday = birthday;
-        this.location = location;
     }
 
     public int getId() {
@@ -50,19 +42,12 @@ public class User {
         return email;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
     public String getPhone() {
         return phone;
     }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public String getLocation() {
-        return location;
-    }
 }
+
