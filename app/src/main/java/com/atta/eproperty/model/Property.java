@@ -1,23 +1,73 @@
 package com.atta.eproperty.model;
 
-public class Property {
+import java.io.Serializable;
+import java.util.Map;
+
+public class Property implements Serializable {
 
 
-    private int propertyId, price, rooms, baths, area;
-    private String imageUrl, address, district, city, governance, type, description, ownerPhone;
+    private Map<String, String> images, imagesNames, amenities;
+    private String[] imagesUrls, amenitiesArray;
+    private int userId, propertyId, price, rooms, baths, area;
+    private String address, district, city, type, description, ownerPhone, creationTime;
     private float latitude, longitude;
 
-    public Property(int propertyId, int price, int rooms, int baths, int area, String imageUrl, String address, String district, String city, String governance, String type, String description, String ownerPhone, long latitude, long longitude) {
+    public Property(String[] imagesUrls, int userId, int propertyId,
+                    int price, int rooms, int baths, int area, String address, String district, String city,
+                    String[] amenitiesArray, String type, String description, String ownerPhone, String creationTime,
+                    float latitude, float longitude) {
+        this.imagesUrls = imagesUrls;
+        this.userId = userId;
         this.propertyId = propertyId;
         this.price = price;
         this.rooms = rooms;
         this.baths = baths;
         this.area = area;
-        this.imageUrl = imageUrl;
         this.address = address;
         this.district = district;
         this.city = city;
-        this.governance = governance;
+        this.amenitiesArray = amenitiesArray;
+        this.type = type;
+        this.description = description;
+        this.ownerPhone = ownerPhone;
+        this.creationTime = creationTime;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public Property(Map<String, String> images, Map<String, String> imagesNames, int userId,
+                    int price, int rooms, int baths, int area, String address, String district, String city,
+                    Map<String, String> amenities, String type, String description, String ownerPhone, String creationTime,
+                    float latitude, float longitude) {
+        this.images = images;
+        this.imagesNames = imagesNames;
+        this.userId = userId;
+        this.price = price;
+        this.rooms = rooms;
+        this.baths = baths;
+        this.area = area;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.amenities = amenities;
+        this.type = type;
+        this.description = description;
+        this.ownerPhone = ownerPhone;
+        this.creationTime = creationTime;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public Property(int propertyId, int price, int rooms, int baths, int area, String address, String district, String city, String[] amenitiesArray, String type, String description, String ownerPhone, long latitude, long longitude) {
+        this.propertyId = propertyId;
+        this.price = price;
+        this.rooms = rooms;
+        this.baths = baths;
+        this.area = area;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.amenitiesArray = amenitiesArray;
         this.type = type;
         this.description = description;
         this.ownerPhone = ownerPhone;
@@ -41,8 +91,12 @@ public class Property {
         return city;
     }
 
-    public String getGovernance() {
-        return governance;
+    public Map<String, String> getAmenities() {
+        return amenities;
+    }
+
+    public String[] getAmenitiesArray() {
+        return amenitiesArray;
     }
 
     public String getType() {
@@ -65,16 +119,8 @@ public class Property {
         return longitude;
     }
 
-    public int getDishId() {
-        return propertyId;
-    }
-
     public int getPrice() {
         return price;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
     }
 
     public String getAddress() {
@@ -87,5 +133,25 @@ public class Property {
 
     public String getDistrict() {
         return district;
+    }
+
+    public Map<String, String> getImages() {
+        return images;
+    }
+
+    public Map<String, String> getImagesNames() {
+        return imagesNames;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public String[] getImagesUrls() {
+        return imagesUrls;
     }
 }

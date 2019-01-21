@@ -1,5 +1,6 @@
 package com.atta.eproperty.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,13 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.atta.eproperty.fragments.AddFragment;
+import com.atta.eproperty.R;
 import com.atta.eproperty.fragments.FavoritesFragment;
 import com.atta.eproperty.fragments.ProfileFragment;
-import com.atta.eproperty.R;
 import com.atta.eproperty.fragments.SearchFragment;
+import com.atta.eproperty.model.SessionManager;
+import com.atta.eproperty.new_property.NewPropertyActivity;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View, BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements MainContract.View, BottomNavigationView.OnNavigationItemSelectedListener{
 
     private TextView mTextMessage;
 
@@ -38,10 +40,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
     };
 
+
+    SessionManager session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // Session class instance
+        session = new SessionManager(this);
 
         //loading the default fragment
         loadFragment(new SearchFragment());
@@ -77,7 +86,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 break;
 
             case R.id.navigation_add:
-                fragment = new AddFragment();
+
+                if (!session.isLoggedIn()){
+                    showLoginPopup();
+                }else {
+                    Intent intent = new Intent(MainActivity.this, NewPropertyActivity.class);
+                    startActivity(intent);
+                }
                 break;
 
             case R.id.navigation_profile:
@@ -87,5 +102,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
 
         return loadFragment(fragment);
+    }
+
+
+    private void showLoginPopup() {
+
     }
 }

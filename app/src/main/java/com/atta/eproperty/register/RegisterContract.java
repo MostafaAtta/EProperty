@@ -17,8 +17,6 @@ public interface RegisterContract {
 
         void register(String name, String email, String password, String phone);
 
-
-
         boolean validate(String name, String email, String password, String passwordConfirm, String phone);
     }
 }

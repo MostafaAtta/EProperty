@@ -105,7 +105,6 @@ public class SessionManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
-        editor.putBoolean(IS_SKIPPED, false);
         editor.putInt(KEY_ID, user.getId());
         editor.putString(KEY_USER_NAME, user.getName());
         editor.putString(KEY_EMAIL, user.getEmail());

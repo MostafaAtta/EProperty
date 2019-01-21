@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".property_datils.PropertyDetailsActivity">
+
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="12dp"
+        android:src="@drawable/phone" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/slider"
+                android:layout_width="wrap_content"
+                android:layout_height="250dp">
+
+            </android.support.v4.view.ViewPager>
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2000000 EGP"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/det"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Apartment, 3 Beds, 2 Bath"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Nasr City, Cairo,"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_margin="12dp"/>
+
+            <LinearLayout
+                android:id="@+id/linear_group_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/show_on_map"
+                    android:layout_marginLeft="12dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="12dp"
+                    android:text="View on map"/>
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_margin="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Details"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Area: "
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/creation_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Creation Time: "
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/avg_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average Price: "
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_margin="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Property description"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Apartment, 3 Beds, 2 Bath"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_margin="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Neighbourhood (within 500 m)"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Essentials:"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/essentials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Apartment, 3 Beds, 2 Bath"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lifestyle:"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:id="@+id/lifestyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Apartment, 3 Beds, 2 Bath"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="5dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_margin="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Amenities"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="12dp"
+                android:textSize="20sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <RelativeLayout
+        android:id="@+id/ly2"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="?android:attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="12dp"
+            android:src="@drawable/left_arrow"/>
+
+
+        <ImageView
+            android:id="@+id/fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_margin="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/star"/>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
