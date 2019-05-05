@@ -25,6 +25,8 @@ public interface PropertyDetailsContract {
 
         void changeFavIcon(boolean isFav);
 
+        void setFavId(int id);
+
         void setDialog();
     }
 
@@ -38,7 +40,7 @@ public interface PropertyDetailsContract {
 
         void addToFav(int propertyId, int userId);
 
-        void removeFromFav(int propertyId, int userId);
+        void removeFromFav(int fId);
 
         void checkIfFav(int propertyId, int userId);
     }

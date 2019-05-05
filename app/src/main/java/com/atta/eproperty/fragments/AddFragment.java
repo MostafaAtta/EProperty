@@ -57,7 +57,7 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
         }
 
         areaText = view.findViewById(R.id.area);
-        typeSpinner = view.findViewById(R.id.type);
+        typeSpinner = view.findViewById(R.id.typeText);
 
         areaText.setHint(Html.fromHtml("Area (m<sup>2</sup>)"));
 

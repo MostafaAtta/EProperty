@@ -4,6 +4,8 @@ public interface LoginContract {
 
     interface View{
 
+        void initiateViews();
+
         void showError(String error);
 
         void showViewError(String view, String error);
@@ -17,12 +19,13 @@ public interface LoginContract {
         void setDialog();
 
         void SkipToMain();
+
+        void dismissProgressDialog();
     }
 
     interface Presenter{
 
         void login(String email, String password);
-
 
         boolean validate(String email, String password);
     }

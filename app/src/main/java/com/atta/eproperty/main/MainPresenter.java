@@ -2,6 +2,8 @@ package com.atta.eproperty.main;
 
 import android.content.Context;
 
+import com.atta.eproperty.QueryUtils;
+
 public class MainPresenter implements MainContract.Presenter{
 
 
@@ -14,4 +16,9 @@ public class MainPresenter implements MainContract.Presenter{
         this.mContext = mContext;
     }
 
+    @Override
+    public void login(String email, String password) {
+
+        QueryUtils.login( email,  password, null, mView, mContext);
+    }
 }

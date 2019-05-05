@@ -1,4 +1,4 @@
-package com.atta.eproperty.fragments;
+package com.atta.eproperty.search_fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +18,10 @@ import com.atta.eproperty.model.Property;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment implements FragmentsContract.View{
+public class SearchFragment extends Fragment implements SearchContract.View{
 
 
-    FragmentsPresenter fragmentsPresenter;
+    SearchPresenter searchPresenter;
 
     RecyclerView recyclerView;
 
@@ -30,21 +30,21 @@ public class SearchFragment extends Fragment implements FragmentsContract.View{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        fragmentsPresenter = new FragmentsPresenter(this, getContext());
+        searchPresenter = new SearchPresenter(this, getContext());
         //return rootView;
         View view = inflater.inflate(R.layout.fragment_search,container,false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        recyclerView = view.findViewById(R.id.recycler);
 
 
-        fragmentsPresenter.getProperties(recyclerView);
+        searchPresenter.getProperties();
 
-        final SwipeRefreshLayout mySwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        final SwipeRefreshLayout mySwipeRefreshLayout = view.findViewById(R.id.swiperefresh);
 
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        fragmentsPresenter.getProperties(recyclerView);
+                        searchPresenter.getProperties();
                         mySwipeRefreshLayout.setRefreshing(false);
                     }
                 }
@@ -63,7 +63,7 @@ public class SearchFragment extends Fragment implements FragmentsContract.View{
     @Override
     public void showRecyclerView(ArrayList<Property> properties) {
 
-        PropertiesAdapter myAdapter = new PropertiesAdapter(getContext(), properties, this, fragmentsPresenter);
+        PropertiesAdapter myAdapter = new PropertiesAdapter(getContext(), properties);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(myAdapter);
     }

@@ -202,15 +202,20 @@
                 tools:text="Apartment, 3 Beds, 2 Bath"
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="12dp"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="12dp"/>
 
             <View
+                android:id="@+id/amenities_view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/black"
-                android:layout_margin="12dp"/>
+                android:layout_marginRight="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="12dp"/>
 
             <TextView
+                android:id="@+id/amenities_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Amenities"
@@ -244,6 +249,7 @@
             android:src="@drawable/left_arrow"/>
 
 
+
         <ImageView
             android:id="@+id/fav"
             android:layout_width="wrap_content"
@@ -255,6 +261,19 @@
             android:src="@drawable/star"/>
 
     </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/edit"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_margin="12dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/ly2"
+        android:src="@drawable/home"/>
 
 
 

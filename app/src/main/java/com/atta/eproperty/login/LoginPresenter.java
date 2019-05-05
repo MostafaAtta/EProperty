@@ -48,24 +48,25 @@ public class LoginPresenter implements LoginContract.Presenter{
         call.enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
-                if(mProgressDialog != null || mProgressDialog.isShowing() ){
-                    mProgressDialog.dismiss();
-                }
-                if (!response.body().getError()) {
-                    mView.showMessage();
-                    SessionManager.getInstance(mContext).createLoginSession(response.body().getUser());
-                    mView.navigateToMain();
-                } else {
 
-                    mView.showError("Invalid email or password");
-                }
+                mView.dismissProgressDialog();
+                if (response.body() != null){
+                    if (!response.body().getError()) {
+                        mView.showMessage();
+                        SessionManager.getInstance(mContext).createLoginSession(response.body().getUser());
+                        mView.navigateToMain();
+                    } else {
+
+                        mView.showError("Invalid email or password");
+                    }
+                }else
+                    mView.showError("some thing wrong");
+
             }
 
             @Override
             public void onFailure(Call<Result> call, Throwable t) {
-                if(mProgressDialog != null || mProgressDialog.isShowing() ){
-                    mProgressDialog.dismiss();
-                }
+                mView.dismissProgressDialog();
 
                 mView.showError(t.getMessage());
             }

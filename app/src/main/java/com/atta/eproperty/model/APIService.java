@@ -1,14 +1,15 @@
 package com.atta.eproperty.model;
 
-import com.squareup.okhttp.ResponseBody;
-
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface APIService {
 
@@ -32,6 +33,24 @@ public interface APIService {
             @Field("password") String password
     );
 
+
+    //the signin call
+    @FormUrlEncoded
+    @POST("rent_avg_price")
+    Call<PriceResult> getRentAvgPrice(
+            @Field("location") String location,
+            @Field("type") String type
+    );
+
+
+    //the signin call
+    @FormUrlEncoded
+    @POST("sale_avg_price")
+    Call<PriceResult> getSaleAvgPrice(
+            @Field("location") String location,
+            @Field("type") String type
+    );
+
     @FormUrlEncoded
     @POST("add_property")
     Call<PropertyResult> addProperty(
@@ -40,6 +59,7 @@ public interface APIService {
             @Field("price") int price,
             @Field("rooms") int rooms,
             @Field("baths") int baths,
+            @Field("levels") String levels,
             @Field("area") int area,
             @Field("address") String address,
             @Field("user_id") int userId,
@@ -51,7 +71,8 @@ public interface APIService {
             @Field("latitude") String latitude,
             @Field("longitude") String longitude,
             @Field("creation_time") String creationTime,
-            @Field("type") String type
+            @Field("type") String type,
+            @Field("category") String category
     );
 
     @FormUrlEncoded
@@ -61,37 +82,47 @@ public interface APIService {
             @Field("user_id") int userId
     );
 
+    @PUT("update_phone/{id}/{phone}")
+    Call<Result> updatePhone(
+            @Path("id") int userId,
+            @Path("phone") String phone
+    );
 
-    @FormUrlEncoded
-    @POST("remove_from_favorite")
+    @PUT("update_password/{id}/{old_password}/{password}")
+    Call<Result> resetPassword(
+            @Path("id") int userId,
+            @Path("old_password") String oldPassword,
+            @Path("password") String password
+    );
+
+    @DELETE("remove_from_favorite/{id}")
     Call<PropertyResult> removeFromFavorite(
-            @Field("property_id") int propertyId,
-            @Field("user_id") int userId
+            @Path("id") int id
     );
 
 
     @FormUrlEncoded
     @POST("check_if_favorite")
-    Call<PropertyResult> checkIfFavorite(
+    Call<FavResult> checkIfFavorite(
             @Field("property_id") int propertyId,
             @Field("user_id") int userId
     );
 
     @FormUrlEncoded
     @POST("get_favorite")
-    Call<PropertyResult> getFavorite(
-            @Field("property_id") int propertyId,
+    Call<Properties> getFavorite(
+            @Field("user_id") int userId
+    );
+
+    @FormUrlEncoded
+    @POST("get_my_properties")
+    Call<Properties> getMyProperties(
             @Field("user_id") int userId
     );
 
     @POST("get_properties")
     Call<Properties> getProperties(
     );
-
-    //the image call
-    @retrofit.http.GET("images/{imageName}")
-    retrofit.Call<ResponseBody> getImageDetails(
-            @retrofit.http.Path("imageName")  String imageName);
 
 
 }

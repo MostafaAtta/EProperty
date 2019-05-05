@@ -28,6 +28,7 @@ public class SessionManager {
 
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";
+
     // All Shared Preferences Keys
     private static final String IS_SKIPPED = "IsSkipped";
 
@@ -37,10 +38,6 @@ public class SessionManager {
     // User name (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
 
-
-    private static final String KEY_USER_LOCATION = "location";
-
-    private static final String KEY_ORDER_LOCATION = "order_location";
 
     // User Name (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
@@ -94,6 +91,11 @@ public class SessionManager {
     // Get Login State
     public String  getPhone(){
         return pref.getString(KEY_USER_PHONE, "no phone");
+    }
+
+    public void setPhone(String phone){
+        editor.putString(KEY_USER_PHONE, phone);
+        editor.apply();
     }
 
     /**
@@ -231,21 +233,4 @@ public class SessionManager {
         editor.commit();
     }
 
-    public String getUserLocation() {
-        return pref.getString(KEY_USER_LOCATION, "");
-    }
-
-    public void setOrderLocation(String locationSting) {
-
-        // Storing national ID in pref
-        editor.putString(KEY_ORDER_LOCATION, locationSting);
-
-
-        // commit changes
-        editor.commit();
-    }
-
-    public String getOrderLocation(){
-        return pref.getString(KEY_ORDER_LOCATION, "");
-    }
 }

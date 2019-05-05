@@ -50,21 +50,22 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
 
-    private void initiateViews() {
+    @Override
+    public void initiateViews() {
         // National ID, Password input text
-        emailText = (EditText)findViewById(R.id.email);
-        passwordText = (EditText)findViewById(R.id.password);
+        emailText = findViewById(R.id.email);
+        passwordText = findViewById(R.id.password);
 
-        newAccount = (TextView) findViewById(R.id.btnRegisterScreen);
+        newAccount = findViewById(R.id.btnRegisterScreen);
         newAccount.setOnClickListener(this);
-        skip = (TextView) findViewById(R.id.btnSkip);
+        skip = findViewById(R.id.btnSkip);
         skip.setOnClickListener(this);
 
         // Login button
-        login = (Button)findViewById(R.id.btn_login);
+        login = findViewById(R.id.btn_login);
         login.setOnClickListener(this);
 
-        show_hide_password = (CheckBox) findViewById(R.id.show_hide_password);
+        show_hide_password = findViewById(R.id.show_hide_password);
         show_hide_password.setOnCheckedChangeListener(this);
     }
 
@@ -124,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void showViewError(String view, String error) {
 
         int id = getResources().getIdentifier(view, "id", this.getPackageName());
-        EditText editText = (EditText)findViewById(id);
+        EditText editText = findViewById(id);
         editText.setError(error);
     }
 
@@ -165,5 +166,13 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         progressDialog = new ProgressDialog(com.atta.eproperty.login.LoginActivity.this,R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+
+        if(progressDialog != null || progressDialog.isShowing() ){
+            progressDialog.dismiss();
+        }
     }
 }

@@ -39,6 +39,7 @@
             android:text="Apartment"/>
 
         <LinearLayout
+            android:id="@+id/baths_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="40dp"
@@ -59,6 +60,7 @@
 
 
         <LinearLayout
+            android:id="@+id/rooms_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="40dp"

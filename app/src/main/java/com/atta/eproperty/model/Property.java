@@ -8,25 +8,52 @@ public class Property implements Serializable {
 
     private Map<String, String> images, imagesNames, amenities;
     private String[] imagesUrls, amenitiesArray;
-    private int userId, propertyId, price, rooms, baths, area;
-    private String address, district, city, type, description, ownerPhone, creationTime;
+    private int userId, id, price, rooms, baths, area;
+    private String category, address, district, city, type, description, ownerPhone, creationTime, levels;
     private float latitude, longitude;
 
-    public Property(String[] imagesUrls, int userId, int propertyId,
-                    int price, int rooms, int baths, int area, String address, String district, String city,
-                    String[] amenitiesArray, String type, String description, String ownerPhone, String creationTime,
+    public Property(String[] imagesUrls, int userId, int id,
+                    int price, int rooms, int baths, String levels, int area, String address, String district, String city,
+                    String[] amenitiesArray, String category, String type, String description, String ownerPhone, String creationTime,
                     float latitude, float longitude) {
         this.imagesUrls = imagesUrls;
         this.userId = userId;
-        this.propertyId = propertyId;
+        this.id = id;
         this.price = price;
         this.rooms = rooms;
         this.baths = baths;
+        this.levels = levels;
         this.area = area;
         this.address = address;
         this.district = district;
         this.city = city;
         this.amenitiesArray = amenitiesArray;
+        this.category = category;
+        this.type = type;
+        this.description = description;
+        this.ownerPhone = ownerPhone;
+        this.creationTime = creationTime;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public Property(int id, String[] imagesUrls, int userId, int propertyId,
+                    int price, int rooms, int baths, String levels, int area, String address, String district, String city,
+                    String[] amenitiesArray, String category, String type, String description, String ownerPhone, String creationTime,
+                    float latitude, float longitude) {
+        this.imagesUrls = imagesUrls;
+        this.userId = userId;
+        this.id = propertyId;
+        this.price = price;
+        this.rooms = rooms;
+        this.baths = baths;
+        this.levels = levels;
+        this.area = area;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.amenitiesArray = amenitiesArray;
+        this.category = category;
         this.type = type;
         this.description = description;
         this.ownerPhone = ownerPhone;
@@ -36,8 +63,8 @@ public class Property implements Serializable {
     }
 
     public Property(Map<String, String> images, Map<String, String> imagesNames, int userId,
-                    int price, int rooms, int baths, int area, String address, String district, String city,
-                    Map<String, String> amenities, String type, String description, String ownerPhone, String creationTime,
+                    int price, int rooms, int baths, String levels, int area, String address, String district, String city,
+                    Map<String, String> amenities, String category, String type, String description, String ownerPhone, String creationTime,
                     float latitude, float longitude) {
         this.images = images;
         this.imagesNames = imagesNames;
@@ -45,11 +72,13 @@ public class Property implements Serializable {
         this.price = price;
         this.rooms = rooms;
         this.baths = baths;
+        this.levels = levels;
         this.area = area;
         this.address = address;
         this.district = district;
         this.city = city;
         this.amenities = amenities;
+        this.category = category;
         this.type = type;
         this.description = description;
         this.ownerPhone = ownerPhone;
@@ -58,16 +87,19 @@ public class Property implements Serializable {
         this.longitude = longitude;
     }
 
-    public Property(int propertyId, int price, int rooms, int baths, int area, String address, String district, String city, String[] amenitiesArray, String type, String description, String ownerPhone, long latitude, long longitude) {
-        this.propertyId = propertyId;
+
+    public Property(int id, int price, int rooms, int baths, String levels, int area, String address, String district, String city, String[] amenitiesArray, String category, String type, String description, String ownerPhone, long latitude, long longitude) {
+        this.id = id;
         this.price = price;
         this.rooms = rooms;
         this.baths = baths;
+        this.levels = levels;
         this.area = area;
         this.address = address;
         this.district = district;
         this.city = city;
         this.amenitiesArray = amenitiesArray;
+        this.category = category;
         this.type = type;
         this.description = description;
         this.ownerPhone = ownerPhone;
@@ -75,8 +107,8 @@ public class Property implements Serializable {
         this.longitude = longitude;
     }
 
-    public int getPropertyId() {
-        return propertyId;
+    public int getId() {
+        return id;
     }
 
     public int getBaths() {
@@ -153,5 +185,13 @@ public class Property implements Serializable {
 
     public String[] getImagesUrls() {
         return imagesUrls;
+    }
+
+    public String getLevels() {
+        return levels;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

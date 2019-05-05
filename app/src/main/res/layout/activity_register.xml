@@ -31,7 +31,7 @@
         android:layout_marginBottom="12dp"
         android:layout_marginTop = "20dp"
         android:background="@android:color/transparent"
-        android:drawableLeft="@drawable/user"
+        android:drawableLeft="@drawable/avatar"
         android:drawablePadding="8dp"
         android:hint="@string/fullName"
         android:inputType="text"

@@ -2,6 +2,7 @@ package com.atta.eproperty.new_property;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,10 +12,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -51,46 +55,66 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
 
     ProgressDialog progressDialog;
 
+    RelativeLayout levelsRelativeLayout, amenitiesRelativeLayout;
+
+    Dialog typeDialog;
+
     NewPropertyPresenter newPropertyPresenter;
 
     AppCompatEditText addressText, amenitiesText, priceText, roomsText, bathsText, areaText,
-            descriptionText;
+            descriptionText, typesIndicatorText, districtText;
+
+    AppCompatTextView priceAvg;
 
     LinearLayout propertyGroup;
 
-    Spinner typeSpinner, categorySpinner, citySpinner;
+    Spinner typeSpinner, categorySpinner, citySpinner, levelsSpinner;
 
-    ArrayAdapter<String> typeAdapter, categoryAdapter, cityAdapter;
+    ArrayAdapter<String> typeAdapter, categoryAdapter, cityAdapter, levelsAdapter;
 
-    List<String> types, categories, cities;
+    List<String> types, categories, cities, levels;
 
     ImageView addImages;
 
     Button confirmBtn;
 
     List<Bitmap> imagesBitmap;
-    List<String> imagesString;
-    List<String> imagesName;
+    List<String> imagesString, imagesName;
 
     RecyclerView recyclerView;
 
-    String[] movieListItems;
+    String[] amenityListItems;
 
-    boolean[] movieCheckedItems;
+    boolean[] amenityCheckedItems;
 
-    ArrayList<Integer> moviesUserItems = new ArrayList<>();
+    ArrayList<Integer> amenitiesUserItems = new ArrayList<>();
 
     Map<String, String> selectedAmenities, imagesNames, images;
 
 
     private int userId, price, rooms, baths, area;
-    private String imageUrl, address, district, city, category, type, description, ownerPhone;
+    private String imageUrl, address, district, city, category, type, description, ownerPhone, levelsValue;
     private float latitude, longitude;
+
+    String schoolUrl, hospitalUrl, restaurantsUrl, cinemaUrl, atmUrl, cafeUrl, pharmacyUrl, parkUrl, shoppingMallUrl, supermarketUrl;
+
+
+    int saleAvgPrice;
+    int rentAvgPrice;
+    int essentialsResults;
+    int lifestyleResults;
+    int PROXIMITY_RADIUS = 500;
+
+    double essentialsFactor, lifestyleFactor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_property);
+
+        essentialsResults = 0;
+
+        lifestyleResults = 0;
 
 
         // Session class instance
@@ -104,11 +128,7 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
 
         initiateArrays();
 
-        typeAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, types);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeSpinner.setAdapter(typeAdapter);
-        typeSpinner.setOnItemSelectedListener(this);
-
+        showTypeDialog();
 
         categoryAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -119,21 +139,120 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(cityAdapter);
         citySpinner.setOnItemSelectedListener(this);
+
+
+        levelsAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, levels);
+        levelsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelsSpinner.setAdapter(levelsAdapter);
+        levelsSpinner.setOnItemSelectedListener(this);
+    }
+
+    private void showTypeDialog() {
+
+        final String[] typesArray = getResources().getStringArray(R.array.types);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Please select the property type");
+        builder.setItems(typesArray, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                // Do something with the selection
+                type = typesArray[item];
+                typesIndicatorText.setText(type);
+                calculateAvgPrice();
+                switch (type){
+                    case "Apartment":
+                    case "Villa":
+                    case "Chalet":
+
+                        roomsText.setVisibility(View.VISIBLE);
+                        bathsText.setVisibility(View.VISIBLE);
+                        levelsRelativeLayout.setVisibility(View.GONE);
+                        amenitiesRelativeLayout.setVisibility(View.VISIBLE);
+                        break;
+                    case "Land":
+                    case "Garage":
+
+                        roomsText.setVisibility(View.GONE);
+                        bathsText.setVisibility(View.GONE);
+                        amenitiesRelativeLayout.setVisibility(View.GONE);
+                        levelsRelativeLayout.setVisibility(View.GONE);
+                        break;
+                    case "Building":
+
+                        roomsText.setVisibility(View.GONE);
+                        bathsText.setVisibility(View.GONE);
+                        levelsRelativeLayout.setVisibility(View.VISIBLE);
+                        amenitiesRelativeLayout.setVisibility(View.GONE);
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+        /*
+        typeDialog = new Dialog(this);
+
+        typeDialog.setCanceledOnTouchOutside(false);
+
+        Button updateBtn;
+
+        typeDialog.setContentView(R.layout.type_popup);
+
+        updateBtn = typeDialog.findViewById(R.id.update_phone_btn);
+        typeSpinner = typeDialog.findViewById(R.id.property_type);
+
+
+        String[] typesArray = getResources().getStringArray(R.array.types);
+
+        types = Arrays.asList(typesArray);
+
+
+        typeAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, types);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
+        typeSpinner.setOnItemSelectedListener(this);
+
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                typesIndicatorText.setText(type);
+                switch (type){
+                    case "Apartment":
+
+                        levelsRelativeLayout.setVisibility(View.GONE);
+                        break;
+                    default:
+
+                        break;
+                }
+
+                typeDialog.dismiss();
+            }
+        });
+
+
+
+
+        typeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        typeDialog.show();
+
+         */
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        if (adapterView.getId() == typeSpinner.getId()){
-
-            if (i != 0){
-                type = types.get(i);
-            }else {
-                type = null;
-            }
-        }else if (adapterView.getId() == categorySpinner.getId()){
+        if (adapterView.getId() == categorySpinner.getId()){
             if (i != 0){
 
                 category = categories.get(i);
+
+
+                calculateAvgPrice();
 
             }else{
                 category = null;
@@ -146,6 +265,15 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
 
             }else{
                 city = null;
+            }
+
+        }else if (adapterView.getId() == levelsSpinner.getId()){
+            if (i != 0){
+
+                levelsValue = levels.get(i);
+
+            }else{
+                levelsValue = "0";
             }
 
         }
@@ -182,7 +310,6 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
                 .toolbarFolderTitle("Folder") // folder selection title
                 .toolbarImageTitle("Tap to select") // image selection title
                 .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                .includeVideo(false) // Show video on image picker // single mode
                 .multi() // multi mode (default mode)
                 .limit(8) // max images can be selected (99 by default)
                 .showCamera(true) // show camera or not (true by default)
@@ -201,6 +328,8 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
             multiChoice();
         }else if (view == confirmBtn){
             AddProperty();
+        }else if (view == typesIndicatorText){
+            showTypeDialog();
         }
     }
 
@@ -216,6 +345,12 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
                 String lon = data.getStringExtra("longitude");
                 longitude = Float.parseFloat(lon);
                 addressText.setText(data.getStringExtra("address"));
+                districtText.setText(data.getStringExtra("district"));
+
+
+                calculateAvgPrice();
+
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -258,6 +393,126 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void calculateAvgPrice() {
+        setUrls();
+
+        String[] essentialsUrl = {schoolUrl, hospitalUrl, pharmacyUrl, atmUrl, supermarketUrl};
+
+        String[] lifestyleUrl = {restaurantsUrl, cafeUrl, cinemaUrl, parkUrl, shoppingMallUrl};
+
+        newPropertyPresenter.requestPlaces(essentialsUrl, lifestyleUrl, districtText.getText().toString(), type, category);
+    }
+
+
+    @Override
+    public String getUrl( String nearbyPlace)
+    {
+
+        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location=").append(latitude).append(",").append(longitude);
+        googlePlaceUrl.append("&radius=").append(PROXIMITY_RADIUS);
+        googlePlaceUrl.append("&type=").append(nearbyPlace);
+        googlePlaceUrl.append("&sensor=true");
+        googlePlaceUrl.append("&key="+"AIzaSyBdDl7JNwsC7AuxuDh-ZvwL2pWpW8uBr2E");
+
+        Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());
+
+        return googlePlaceUrl.toString();
+    }
+
+    @Override
+    public void setLifestyleAvg(int length) {
+
+        lifestyleResults = length;
+
+        if (lifestyleResults >= 15){
+
+            lifestyleFactor = 0.4;
+
+        }else if (lifestyleResults >= 10){
+
+            lifestyleFactor = 0.35;
+
+        }else if (lifestyleResults >= 5){
+
+            lifestyleFactor = 0.3;
+
+        }else {
+
+            lifestyleFactor = 0.25;
+
+        }
+    }
+
+    @Override
+    public void setEssentialsAvg(int length) {
+
+        essentialsResults = length;
+        if (essentialsResults >= 30){
+
+            essentialsFactor = 0.8;
+
+        }else if (essentialsResults >= 20){
+
+            essentialsFactor = 0.7;
+
+        }else if (essentialsResults >= 10){
+
+            essentialsFactor = 0.6;
+
+        }else {
+
+            essentialsFactor = 0.55;
+
+        }
+    }
+
+    @Override
+    public void setSaleAvgPrice(int price) {
+
+        saleAvgPrice = (int) (price * (essentialsFactor + lifestyleFactor));
+
+        Toast.makeText(this, String.valueOf(saleAvgPrice), Toast.LENGTH_SHORT).show();
+
+        String priceAvgString = "The average sale Price for this location is " + saleAvgPrice + " EGP per meter";
+
+        priceAvg.setText(priceAvgString);
+
+
+
+    }
+
+    @Override
+    public void setRentAvgPrice(int price) {
+
+        rentAvgPrice = (int) (price  * (essentialsFactor + lifestyleFactor));
+
+        Toast.makeText(this, String.valueOf(rentAvgPrice), Toast.LENGTH_SHORT).show();
+
+        String priceAvgString = "The average rent Price for this location is " + rentAvgPrice + " EGP per meter";
+
+        priceAvg.setText(priceAvgString);
+
+    }
+
+
+    @Override
+    public void setUrls() {
+
+        schoolUrl = getUrl("school");
+        hospitalUrl = getUrl("hospital");
+        pharmacyUrl = getUrl("pharmacy");
+        atmUrl = getUrl("atm");
+        supermarketUrl = getUrl("supermarket");
+
+        restaurantsUrl = getUrl("restaurant");
+        cinemaUrl = getUrl("movie_theater");
+        cafeUrl = getUrl("cafe");
+        parkUrl = getUrl("park");
+        shoppingMallUrl = getUrl("shopping_mall");
+
+    }
+
     private Bitmap getBitmapFromPath(String filePath) {
 
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -269,8 +524,8 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
     public String getStringImage(Bitmap bm){
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG,100,ba);
-        byte[] imagebyte = ba.toByteArray();
-        String encode = Base64.encodeToString(imagebyte,Base64.DEFAULT);
+        byte[] imageByte = ba.toByteArray();
+        String encode = Base64.encodeToString(imageByte,Base64.DEFAULT);
         return encode;
     }
 
@@ -280,7 +535,11 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         propertyGroup = findViewById(R.id.property_group);
         areaText = findViewById(R.id.area);
         areaText.setHint(Html.fromHtml("Area (m<sup>2</sup>)"));
-        typeSpinner = findViewById(R.id.type);
+        typesIndicatorText = findViewById(R.id.typeText);
+        typesIndicatorText.setOnClickListener(this);
+        levelsRelativeLayout = findViewById(R.id.levels_layout);
+        amenitiesRelativeLayout = findViewById(R.id.amenities_layout);
+        levelsSpinner = findViewById(R.id.levels);
         categorySpinner = findViewById(R.id.category);
         citySpinner = findViewById(R.id.city);
         addressText = findViewById(R.id.address);
@@ -294,6 +553,8 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         bathsText = findViewById(R.id.baths);
         areaText = findViewById(R.id.area);
         descriptionText = findViewById(R.id.desc);
+        districtText= findViewById(R.id.district);
+        priceAvg = findViewById(R.id.price_avg);
 
         recyclerView = findViewById(R.id.images_recycler);
 
@@ -323,12 +584,25 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         userId = session.getUserId();
         price = Integer.parseInt(priceText.getText().toString());
         area = Integer.parseInt(areaText.getText().toString());
-        rooms = Integer.parseInt(roomsText.getText().toString());
-        baths = Integer.parseInt(bathsText.getText().toString());
-        description = descriptionText.getText().toString();
+        if (!roomsText.getText().toString().isEmpty()){
 
-        Property property = new Property(images, imagesNames, userId, price, rooms, baths, area, address, district, city,
-                selectedAmenities, type, description, ownerPhone, creationTime, latitude, longitude);
+            rooms = Integer.parseInt(roomsText.getText().toString());
+        }else {
+            rooms = 0;
+        }
+
+        if (!bathsText.getText().toString().isEmpty()){
+
+            baths = Integer.parseInt(bathsText.getText().toString());
+        }else {
+            baths = 0;
+        }
+        description = descriptionText.getText().toString();
+        district = districtText.getText().toString();
+        address = addressText.getText().toString();
+
+        Property property = new Property(images, imagesNames, userId, price, rooms, baths, levelsValue, area, address, district, city,
+                selectedAmenities, category, type, description, ownerPhone, creationTime, latitude, longitude);
 
         progressDialog.show();
 
@@ -347,9 +621,9 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         imagesNames = new HashMap<String, String>();
         images = new HashMap<String, String>();
 
-        movieListItems = getResources().getStringArray(R.array.amenities);
+        amenityListItems = getResources().getStringArray(R.array.amenities);
 
-        movieCheckedItems = new boolean[movieListItems.length];
+        amenityCheckedItems = new boolean[amenityListItems.length];
 
 
         String[] typesArray = getResources().getStringArray(R.array.types);
@@ -364,6 +638,10 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         String[] citiesArray = getResources().getStringArray(R.array.cities);
 
         cities = Arrays.asList(citiesArray);
+
+        String[] levelsArray = getResources().getStringArray(R.array.levels);
+
+        levels = Arrays.asList(levelsArray);
     }
 
     @Override
@@ -380,20 +658,20 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
     }
 
     @Override
-    public void setMovies(String movies){
+    public void setAmenities(String amenities){
 
-        String[] arrayString = movies.split(",");
+        String[] arrayString = amenities.split(",");
 
-        List<String> movieList = Arrays.asList(movieListItems);
+        List<String> amenitiesList = Arrays.asList(amenityListItems);
         for (int i = 0; i < arrayString.length; i++) {
-            int currentItem = movieList.indexOf(arrayString[i]);
-            moviesUserItems.add(currentItem);
+            int currentItem = amenitiesList.indexOf(arrayString[i]);
+            amenitiesUserItems.add(currentItem);
 
         }
-        for (int j = 0; j < moviesUserItems.size(); j++) {
-            movieCheckedItems[moviesUserItems.get(j)] = true;
+        for (int j = 0; j < amenitiesUserItems.size(); j++) {
+            amenityCheckedItems[amenitiesUserItems.get(j)] = true;
         }
-        amenitiesText.setText(movies);
+        amenitiesText.setText(amenities);
     }
 
     @Override
@@ -429,21 +707,6 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
             showViewError("area",null);
         }
 
-        if (roomsText.getText().toString().isEmpty()) {
-            showViewError("rooms","Enter Rooms number");
-            valid = false;
-
-        }else {
-            showViewError("rooms",null);
-        }
-
-        if (bathsText.getText().toString().isEmpty()) {
-            showViewError("baths","Enter Baths number");
-            valid = false;
-
-        }else {
-            showViewError("baths",null);
-        }
 
         if (descriptionText.getText().toString().isEmpty()) {
             showViewError("desc","Enter Property Description");
@@ -467,14 +730,6 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
             valid = false;
         }
 
-        if (amenitiesText.getText().toString().isEmpty()) {
-            showViewError("amenities","Enter Property Amenities");
-            valid = false;
-
-        }else {
-            showViewError("amenities",null);
-        }
-
         return valid;
     }
 
@@ -482,14 +737,14 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
     public void multiChoice(){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(NewPropertyActivity.this);
         mBuilder.setTitle("Amenities");
-        mBuilder.setMultiChoiceItems(movieListItems, movieCheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        mBuilder.setMultiChoiceItems(amenityListItems, amenityCheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
 
                 if(isChecked){
-                    moviesUserItems.add(position);
+                    amenitiesUserItems.add(position);
                 }else{
-                    moviesUserItems.remove((Integer.valueOf(position)));
+                    amenitiesUserItems.remove((Integer.valueOf(position)));
                 }
             }
         });
@@ -499,11 +754,11 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 String item = "";
-                for (int i = 0; i < moviesUserItems.size(); i++) {
-                    item = item + movieListItems[moviesUserItems.get(i)];
+                for (int i = 0; i < amenitiesUserItems.size(); i++) {
+                    item = item + amenityListItems[amenitiesUserItems.get(i)];
 
-                    selectedAmenities.put("amenities[" + i + "]", movieListItems[moviesUserItems.get(i)]);
-                    if (i != moviesUserItems.size() - 1) {
+                    selectedAmenities.put("amenities[" + i + "]", amenityListItems[amenitiesUserItems.get(i)]);
+                    if (i != amenitiesUserItems.size() - 1) {
                         item = item + ", ";
                     }
                 }
@@ -522,9 +777,9 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                for (int i = 0; i < movieCheckedItems.length; i++) {
-                    movieCheckedItems[i] = false;
-                    moviesUserItems.clear();
+                for (int i = 0; i < amenityCheckedItems.length; i++) {
+                    amenityCheckedItems[i] = false;
+                    amenitiesUserItems.clear();
                     amenitiesText.setHint("Amenities");
                     amenitiesText.setText(null);
                 }

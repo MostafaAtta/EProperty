@@ -25,6 +25,7 @@ import com.atta.eproperty.model.AmenitiesAdapter;
 import com.atta.eproperty.model.Property;
 import com.atta.eproperty.model.SessionManager;
 import com.atta.eproperty.model.ViewPagerAdapter;
+import com.atta.eproperty.new_property.NewPropertyActivity;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -48,7 +49,7 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
     RecyclerView amenitiesRecyclerView;
 
-    ImageView backBtn, favBtn;
+    ImageView backBtn, favBtn, editeBtn;
 
     LinearLayout locationLinearLayout;
 
@@ -56,7 +57,7 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
     boolean isFavorite;
 
-    int PROXIMITY_RADIUS = 500;
+    int favId, PROXIMITY_RADIUS = 500;
 
     PropertyDetailsPresenter propertyDetailsPresenter;
 
@@ -74,7 +75,7 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
         property = (Property) getIntent().getSerializableExtra("property");
 
-        propertyDetailsPresenter.checkIfFav(property.getPropertyId(), sessionManager.getUserId());
+        propertyDetailsPresenter.checkIfFav(property.getId(), sessionManager.getUserId());
 
         initiateViews();
 
@@ -111,17 +112,23 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
             startActivity(intent);
         }else if (v == favBtn){
 
-            progressDialog.show();
+
             if (isFavorite){
 
-                propertyDetailsPresenter.removeFromFav(property.getPropertyId(), sessionManager.getUserId());
+                progressDialog.setMessage("Removing from Favorites...");
+                propertyDetailsPresenter.removeFromFav(favId);
             }else {
 
-                propertyDetailsPresenter.addToFav(property.getPropertyId(), sessionManager.getUserId());
+                progressDialog.setMessage("Adding to your Favorites...");
+                propertyDetailsPresenter.addToFav(property.getId(), sessionManager.getUserId());
             }
+            progressDialog.show();
         }else if (v == floatingActionButton){
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + property.getOwnerPhone()));
+            startActivity(intent);
+        }else if (v == editeBtn){
+            Intent intent = new Intent(PropertyDetailsActivity.this, NewPropertyActivity.class);
             startActivity(intent);
         }
     }
@@ -162,6 +169,11 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
     }
 
     @Override
+    public void setFavId(int id) {
+        favId = id;
+    }
+
+    @Override
     public void initiateViews() {
 
         floatingActionButton = findViewById(R.id.floating);
@@ -173,6 +185,13 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         lifestyleTv = findViewById(R.id.lifestyle);
         backBtn = findViewById(R.id.btn_back);
         backBtn.setOnClickListener(this);
+        editeBtn = findViewById(R.id.edit);
+        int userId = sessionManager.getUserId();
+        int propUserId = property.getUserId();
+        if (userId == propUserId){
+            editeBtn.setVisibility(View.VISIBLE);
+        }
+        editeBtn.setOnClickListener(this);
         favBtn = findViewById(R.id.fav);
         favBtn.setOnClickListener(this);
         areaTv = findViewById(R.id.area);
@@ -185,15 +204,24 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
     @Override
     public void setViews() {
+        String[] finalUrls;
+
+        if (property.getImagesUrls() != null){
+
+            imageUrls = property.getImagesUrls();
 
 
-        imageUrls = property.getImagesUrls();
+            finalUrls = new String[imageUrls.length];
 
-        String[] finalUrls = new String[imageUrls.length];
-
-        for (int i=0; i < imageUrls.length; i++){
-            finalUrls[i] = APIUrl.Images_BASE_URL + "images/" + imageUrls[i];
+            for (int i=0; i < imageUrls.length; i++){
+                finalUrls[i] = APIUrl.Images_BASE_URL + imageUrls[i];
+            }
+        }else {
+            finalUrls = new String[1];
+            finalUrls[0] = APIUrl.Images_BASE_URL + "property_tmp.png";
         }
+
+
 
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(this, finalUrls);
@@ -207,23 +235,51 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         priceTv.setText(priceString);
         String area = "Area: " + String.valueOf(property.getArea()) + " " + Html.fromHtml("(m<sup>2</sup>)");
         areaTv.setText(area);
-        long timeInMilliseconds = Long.parseLong(property.getCreationTime());
-        Date dateObject = new Date(timeInMilliseconds*1000L);
-        String creationTime = "Creation Time: " + formatDateTime(dateObject);
+        //long timeInMilliseconds = Long.parseLong(property.getCreationTime());
+        //Date dateObject = new Date(timeInMilliseconds*1000L);
+        String creationTime = "Creation Time: " + property.getCreationTime();
         creationTimeTv.setText(creationTime);
         String desc = property.getDescription();
         desTv.setText(desc);
-        String details = property.getType() + ", " + String.valueOf(property.getRooms()) + " Beds, " +
-                String.valueOf(property.getBaths()) + " Baths, ";
-        detailsTv.setText(details);
+        switch (property.getType()){
+            case "Land":
+            case "Garage":
+                String details1 = property.getType();
+                detailsTv.setText(details1);
+                break;
+
+            case "Building":
+                String details2 = property.getType() + ", " + property.getLevels() + " Levels, ";
+                detailsTv.setText(details2);
+                break;
+            default:
+                String details3 = property.getType() + ", " + String.valueOf(property.getRooms()) + " Beds, " +
+                        String.valueOf(property.getBaths()) + " Baths, ";
+                detailsTv.setText(details3);
+                break;
+        }
+
         String address = property.getCity() + ", " + property.getDistrict();
         addressTv.setText(address);
 
-        String[] amenitiesArray = property.getAmenitiesArray();
+        switch (property.getType()){
+            case "Land":
+            case "Garage":
+            case "Building":
+                amenitiesRecyclerView.setVisibility(View.GONE);
+                findViewById(R.id.amenities_view).setVisibility(View.GONE);
+                findViewById(R.id.amenities_text).setVisibility(View.GONE);
+                break;
+            default:
+                String[] amenitiesArray = property.getAmenitiesArray();
 
-        amenitiesRecyclerView = findViewById(R.id.grid);
-        amenitiesRecyclerView.setAdapter(new AmenitiesAdapter(amenitiesArray));
-        amenitiesRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                amenitiesRecyclerView.setVisibility(View.VISIBLE);
+                amenitiesRecyclerView = findViewById(R.id.grid);
+                amenitiesRecyclerView.setAdapter(new AmenitiesAdapter(amenitiesArray));
+                amenitiesRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                break;
+        }
+
 
 
     }
@@ -237,7 +293,6 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         }
         progressDialog = new ProgressDialog(PropertyDetailsActivity.this,R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Adding your Favorites...");
     }
 
     @Override

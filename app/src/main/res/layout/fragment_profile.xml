@@ -144,8 +144,20 @@
                 android:text="Reset Password"/>
         </LinearLayout>
 
+        <Button
+            android:id="@+id/my_adds_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button_form"
+            android:text="View Your Properties"/>
 
     </LinearLayout>
+
+
 
 
 </LinearLayout>

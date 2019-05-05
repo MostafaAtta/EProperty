@@ -17,6 +17,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.atta.eproperty.model.APIService;
 import com.atta.eproperty.model.APIUrl;
+import com.atta.eproperty.model.FavResult;
 import com.atta.eproperty.model.PropertyResult;
 
 import org.json.JSONArray;
@@ -89,6 +90,8 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
                             case "essentials":
 
                                 mView.setViews(essentialsResults, type);
+
+
                                 break;
                             case "lifestyle":
 
@@ -190,6 +193,9 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
                     if (!response.body().getError()) {
                         //starting Main activity
                         mView.changeFavIcon(true);
+                        mView.setFavId(response.body().getId());
+                    }else {
+                        mView.showMessage(response.body().getMessage());
                     }
                 }
             }
@@ -206,7 +212,7 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
     }
 
     @Override
-    public void removeFromFav(int propertyId, int userId) {
+    public void removeFromFav(int fId) {
 
         //building retrofit object
         Retrofit retrofit = new Retrofit.Builder()
@@ -219,7 +225,7 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
 
 
         //defining the call
-        Call<PropertyResult> call = service.removeFromFavorite(propertyId, userId);
+        Call<PropertyResult> call = service.removeFromFavorite(fId);
 
         //calling the api
         call.enqueue(new Callback<PropertyResult>() {
@@ -237,6 +243,8 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
                     if (!response.body().getError()) {
                         //starting Main activity
                         mView.changeFavIcon(false);
+                    }else {
+                        mView.showMessage(response.body().getMessage());
                     }
                 }
             }
@@ -266,12 +274,12 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
 
 
         //defining the call
-        Call<PropertyResult> call = service.checkIfFavorite(propertyId, userId);
+        Call<FavResult> call = service.checkIfFavorite(propertyId, userId);
 
         //calling the api
-        call.enqueue(new Callback<PropertyResult>() {
+        call.enqueue(new Callback<FavResult>() {
             @Override
-            public void onResponse(Call<PropertyResult> call, retrofit2.Response<PropertyResult> response) {
+            public void onResponse(Call<FavResult> call, retrofit2.Response<FavResult> response) {
                 //hiding progress dialog
                 if(progressDialog != null || progressDialog.isShowing() ){
                     progressDialog.dismiss();
@@ -280,18 +288,18 @@ public class PropertyDetailsPresenter implements PropertyDetailsContract.Present
                 //displaying the message from the response as toast
                 if (response.body() != null){
 
-                    mView.showMessage(response.body().getMessage());
-                    //if there is no error
-                    if (!response.body().getError()) {
-                        //starting Main activity
-                        mView.changeFavIcon(true);
+                    mView.changeFavIcon(response.body().getFavorite());
+
+                    if (response.body().getFavorite()){
+                        mView.setFavId(response.body().getId());
                     }
+
                 }
 
             }
 
             @Override
-            public void onFailure(Call<PropertyResult> call, Throwable t) {
+            public void onFailure(Call<FavResult> call, Throwable t) {
 
                 if(progressDialog != null || progressDialog.isShowing() ){
                     progressDialog.dismiss();

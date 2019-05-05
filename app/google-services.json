@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "218618310015",
+    "firebase_url": "https://eproperty-1cee1.firebaseio.com",
+    "project_id": "eproperty-1cee1",
+    "storage_bucket": "eproperty-1cee1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:218618310015:android:29b3f2833f55b4c7",
+        "android_client_info": {
+          "package_name": "com.atta.eproperty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "218618310015-1690vhb11ccnoj383qcrgpnbrsvemb74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.atta.eproperty",
+            "certificate_hash": "5cc0be3a1d439ae2cb8592fd20472407bf9783ff"
+          }
+        },
+        {
+          "client_id": "218618310015-1da70g6305dn6cfr9q6m8b2mcnqashhe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNxAWbu8E0vFhtH4D-z-1Y7LPP1p6UGYA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "218618310015-1da70g6305dn6cfr9q6m8b2mcnqashhe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

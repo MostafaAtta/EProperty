@@ -256,24 +256,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View view) {
         List<Address> addresses = getAddress(myLatLng);
 
-        String address = addresses.get(0).getAddressLine(0);
+        String address = "";
 
         if (!placeSelected){
-            address = addresses.get(0).getAddressLine(0);
+            if (addresses!= null){
+                
+                address = addresses.get(0).getAddressLine(0);
+            }
+            
         }else {
             address = myPlace.getAddress().toString();
         }
 
         Intent intent = new Intent();
 
-        String district;
-        if(addresses.get(0).getSubAdminArea() != null) {
-            district = addresses.get(0).getSubAdminArea();
+        String district = "";
+        if (addresses != null){
+            if(addresses.get(0).getSubAdminArea() != null) {
+                district = addresses.get(0).getSubAdminArea();
+            }else {
+                district = addresses.get(0).getAdminArea();
+            }
         }else if(myPlace != null){
 
             district = String.valueOf(myPlace.getName());
-        }else {
-            district = addresses.get(0).getAdminArea();
         }
 
 

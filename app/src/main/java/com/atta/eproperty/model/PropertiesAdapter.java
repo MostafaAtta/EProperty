@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.atta.eproperty.R;
-import com.atta.eproperty.fragments.FragmentsContract;
-import com.atta.eproperty.fragments.FragmentsPresenter;
 import com.atta.eproperty.property_datils.PropertyDetailsActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -23,15 +23,9 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.My
 
     private List<Property> properties;
 
-    private FragmentsPresenter fragmentsPresenter;
-
-    private FragmentsContract.View view ;
-
-    public PropertiesAdapter(Context mContext, List<Property> properties, FragmentsContract.View view, FragmentsPresenter fragmentsPresenter) {
+    public PropertiesAdapter(Context mContext, List<Property> properties) {
         this.mContext = mContext;
         this.properties = properties;
-        this.fragmentsPresenter = fragmentsPresenter;
-        this.view = view;
     }
 
     @NonNull
@@ -48,15 +42,34 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.My
 
         final Property property = properties.get(i) ;
 
-        final int id = property.getPropertyId();
+        final int id = property.getId();
         final String type = property.getType();
+        switch (type){
+            case "Land":
+            case "Garage":
+            case "Building":
+                myViewHolder.roomsLinearLayout.setVisibility(View.GONE);
+                myViewHolder.bathsLinearLayout.setVisibility(View.GONE);
+                break;
+            default:
+                myViewHolder.roomsLinearLayout.setVisibility(View.VISIBLE);
+                myViewHolder.bathsLinearLayout.setVisibility(View.VISIBLE);
+                break;
+        }
         final String district = property.getDistrict();
         final int price = property.getPrice();
         final int rooms = property.getRooms();
         final int baths = property.getBaths();
         String[] images = property.getImagesUrls();
-        final String imageURL = images[0];
-        fragmentsPresenter.getRetrofitImage(myViewHolder.propertyImage, imageURL);
+        if (property.getImagesUrls() != null){
+
+            final String imageURL = APIUrl.Images_BASE_URL + images[0];
+            Picasso.get()
+                    .load(imageURL)
+                    .resize(50, 50)
+                    .centerCrop()
+                    .into(myViewHolder.propertyImage);
+        }
         myViewHolder.type.setText(type);
         myViewHolder.price.setText(String.valueOf(price) + " EGP");
         myViewHolder.rooms.setText(String.valueOf(rooms));
@@ -84,6 +97,7 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.My
 
         public TextView price, type, rooms, baths, district;
         public ImageView propertyImage;
+        public LinearLayout roomsLinearLayout, bathsLinearLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,6 +107,8 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.My
             baths = itemView.findViewById(R.id.baths_txt);
             district = itemView.findViewById(R.id.district_txt);
             type = itemView.findViewById(R.id.type_txt);
+            roomsLinearLayout = itemView.findViewById(R.id.rooms_layout);
+            bathsLinearLayout = itemView.findViewById(R.id.baths_layout);
         }
     }
 }
