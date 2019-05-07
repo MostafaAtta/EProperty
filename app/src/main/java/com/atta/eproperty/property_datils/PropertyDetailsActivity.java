@@ -45,11 +45,11 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
     FloatingActionButton floatingActionButton;
 
-    TextView priceTv, detailsTv, addressTv, essentialsTv, lifestyleTv, areaTv, creationTimeTv, desTv;
+    TextView priceTv, detailsTv, addressTv, essentialsTv, lifestyleTv, areaTv, creationTimeTv, desTv, avgPrice, category;
 
     RecyclerView amenitiesRecyclerView;
 
-    ImageView backBtn, favBtn, editeBtn;
+    ImageView backBtn, favBtn, editBtn;
 
     LinearLayout locationLinearLayout;
 
@@ -57,7 +57,17 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
     boolean isFavorite;
 
-    int favId, PROXIMITY_RADIUS = 500;
+
+    int saleAvgPrice;
+    int rentAvgPrice;
+    int essentialsResults;
+    int lifestyleResults;
+    int PROXIMITY_RADIUS = 500;
+
+    double essentialsFactor, lifestyleFactor;
+
+
+    int favId;
 
     PropertyDetailsPresenter propertyDetailsPresenter;
 
@@ -91,9 +101,9 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
 
         String[] lifestylePlace = {"Restaurant", "Cafe", "Cinema", "Park", "Shopping Mall"};
 
-        propertyDetailsPresenter.requestPlaces(essentialsUrl,"essentials", essentialsPlace);
+        propertyDetailsPresenter.requestPlaces(essentialsUrl, lifestyleUrl, essentialsPlace, lifestylePlace,  property.getDistrict(), property.getType(), property.getCategory() );
 
-        propertyDetailsPresenter.requestPlaces(lifestyleUrl, "lifestyle", lifestylePlace);
+        //propertyDetailsPresenter.requestPlaces(lifestyleUrl, "lifestyle", lifestylePlace);
 
     }
 
@@ -113,32 +123,35 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         }else if (v == favBtn){
 
 
-            if (isFavorite){
+            if (sessionManager.isLoggedIn()){
 
-                progressDialog.setMessage("Removing from Favorites...");
-                propertyDetailsPresenter.removeFromFav(favId);
-            }else {
+                if (isFavorite){
 
-                progressDialog.setMessage("Adding to your Favorites...");
-                propertyDetailsPresenter.addToFav(property.getId(), sessionManager.getUserId());
-            }
-            progressDialog.show();
+                    progressDialog.setMessage("Removing from Favorites...");
+                    propertyDetailsPresenter.removeFromFav(favId);
+                }else {
+
+                    progressDialog.setMessage("Adding to your Favorites...");
+                    propertyDetailsPresenter.addToFav(property.getId(), sessionManager.getUserId());
+                }
+                progressDialog.show();
+            }else showMessage("you need to login first");
         }else if (v == floatingActionButton){
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + property.getOwnerPhone()));
             startActivity(intent);
-        }else if (v == editeBtn){
+        }else if (v == editBtn){
             Intent intent = new Intent(PropertyDetailsActivity.this, NewPropertyActivity.class);
             startActivity(intent);
         }
     }
 
     @Override
-    public String getUrl(double latitude, double longitude, String nearbyPlace)
+    public String getUrl(String nearbyPlace)
     {
 
         StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlaceUrl.append("location=").append(latitude).append(",").append(longitude);
+        googlePlaceUrl.append("location=").append(property.getLatitude()).append(",").append(property.getLongitude());
         googlePlaceUrl.append("&radius=").append(PROXIMITY_RADIUS);
         googlePlaceUrl.append("&type=").append(nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
@@ -181,17 +194,19 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         priceTv = findViewById(R.id.price);
         detailsTv = findViewById(R.id.det);
         addressTv = findViewById(R.id.add);
+        avgPrice = findViewById(R.id.avg_price);
+        category = findViewById(R.id.category);
         essentialsTv = findViewById(R.id.essentials);
         lifestyleTv = findViewById(R.id.lifestyle);
         backBtn = findViewById(R.id.btn_back);
         backBtn.setOnClickListener(this);
-        editeBtn = findViewById(R.id.edit);
+        editBtn = findViewById(R.id.edit);
         int userId = sessionManager.getUserId();
         int propUserId = property.getUserId();
         if (userId == propUserId){
-            editeBtn.setVisibility(View.VISIBLE);
+            editBtn.setVisibility(View.VISIBLE);
         }
-        editeBtn.setOnClickListener(this);
+        editBtn.setOnClickListener(this);
         favBtn = findViewById(R.id.fav);
         favBtn.setOnClickListener(this);
         areaTv = findViewById(R.id.area);
@@ -232,7 +247,9 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         NumberFormat format = NumberFormat.getNumberInstance();
         int price = property.getPrice();
         String priceString = format.format(price) + " EGP";
+        String apartmentCategory = " Category: " + property.getCategory();
         priceTv.setText(priceString);
+        category.setText(apartmentCategory);
         String area = "Area: " + String.valueOf(property.getArea()) + " " + Html.fromHtml("(m<sup>2</sup>)");
         areaTv.setText(area);
         //long timeInMilliseconds = Long.parseLong(property.getCreationTime());
@@ -318,17 +335,17 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
     @Override
     public void setUrls() {
 
-        schoolUrl = getUrl(property.getLatitude(), property.getLongitude(), "school");
-        hospitalUrl = getUrl(property.getLatitude(), property.getLongitude(), "hospital");
-        pharmacyUrl = getUrl(property.getLatitude(), property.getLongitude(), "pharmacy");
-        atmUrl = getUrl(property.getLatitude(), property.getLongitude(), "atm");
-        supermarketUrl = getUrl(property.getLatitude(), property.getLongitude(), "supermarket");
+        schoolUrl = getUrl("school");
+        hospitalUrl = getUrl("hospital");
+        pharmacyUrl = getUrl("pharmacy");
+        atmUrl = getUrl( "atm");
+        supermarketUrl = getUrl("supermarket");
 
-        restaurantsUrl = getUrl(property.getLatitude(), property.getLongitude(), "restaurant");
-        cinemaUrl = getUrl(property.getLatitude(), property.getLongitude(), "movie_theater");
-        cafeUrl = getUrl(property.getLatitude(), property.getLongitude(), "cafe");
-        parkUrl = getUrl(property.getLatitude(), property.getLongitude(), "park");
-        shoppingMallUrl = getUrl(property.getLatitude(), property.getLongitude(), "shopping_mall");
+        restaurantsUrl = getUrl( "restaurant");
+        cinemaUrl = getUrl( "movie_theater");
+        cafeUrl = getUrl("cafe");
+        parkUrl = getUrl( "park");
+        shoppingMallUrl = getUrl( "shopping_mall");
 
     }
 
@@ -338,4 +355,81 @@ public class PropertyDetailsActivity extends AppCompatActivity implements View.O
         SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy h:mm a");
         return dateFormat.format(dateObject);
     }
+
+    @Override
+    public void setSaleAvgPrice(int price) {
+
+        saleAvgPrice = (int) (price * (essentialsFactor + lifestyleFactor));
+
+        Toast.makeText(this, String.valueOf(saleAvgPrice), Toast.LENGTH_SHORT).show();
+
+        String priceAvgString = "Average Price: " + saleAvgPrice + " EGP per meter";
+
+        avgPrice.setText(priceAvgString);
+
+
+
+    }
+
+    @Override
+    public void setRentAvgPrice(int price) {
+
+        rentAvgPrice = (int) (price  * (essentialsFactor + lifestyleFactor));
+
+        Toast.makeText(this, String.valueOf(rentAvgPrice), Toast.LENGTH_SHORT).show();
+
+        String priceAvgString = "Average Price: " + rentAvgPrice + " EGP per meter";
+
+        avgPrice.setText(priceAvgString);
+
+    }
+
+
+    @Override
+    public void setLifestyleAvg(int length) {
+
+        lifestyleResults = length;
+
+        if (lifestyleResults >= 15){
+
+            lifestyleFactor = 0.4;
+
+        }else if (lifestyleResults >= 10){
+
+            lifestyleFactor = 0.35;
+
+        }else if (lifestyleResults >= 5){
+
+            lifestyleFactor = 0.3;
+
+        }else {
+
+            lifestyleFactor = 0.25;
+
+        }
+    }
+
+    @Override
+    public void setEssentialsAvg(int length) {
+
+        essentialsResults = length;
+        if (essentialsResults >= 30){
+
+            essentialsFactor = 0.8;
+
+        }else if (essentialsResults >= 20){
+
+            essentialsFactor = 0.7;
+
+        }else if (essentialsResults >= 10){
+
+            essentialsFactor = 0.6;
+
+        }else {
+
+            essentialsFactor = 0.55;
+
+        }
+    }
+
 }

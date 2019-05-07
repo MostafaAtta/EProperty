@@ -39,6 +39,8 @@ public interface NewPropertyContract {
         void setSaleAvgPrice(int price);
 
         void setRentAvgPrice(int price);
+
+        void setAddress(String formattedAddress, String area, String city);
     }
 
     interface Presenter{
@@ -50,6 +52,8 @@ public interface NewPropertyContract {
         void createStringRequest(String url, String type, int index, String location, String PropertyType, String category);
 
         void getAvgPrice(String location, String type, String category);
+
+        void getAddress(String url);
 
     }
 }

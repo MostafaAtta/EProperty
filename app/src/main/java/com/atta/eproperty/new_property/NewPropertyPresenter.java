@@ -32,13 +32,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewPropertyPresenter implements NewPropertyContract.Presenter {
 
-    ProgressDialog mProgressDialog;
+    private ProgressDialog mProgressDialog;
 
     private NewPropertyContract.View mView;
 
     private Context mContext;
 
-    int essentialsResults, lifestyleResults;
+    private int essentialsResults, lifestyleResults;
+
+    private RequestQueue requestQueue;
 
     public NewPropertyPresenter(NewPropertyContract.View view, Context context, ProgressDialog progressDialog) {
         this.mView = view;
@@ -122,6 +124,9 @@ public class NewPropertyPresenter implements NewPropertyContract.Presenter {
 
         lifestyleResults = 0;
 
+
+        requestQueue = Volley.newRequestQueue(mContext);
+
         for (int i =0; i < 10; i++){
 
 
@@ -169,7 +174,7 @@ public class NewPropertyPresenter implements NewPropertyContract.Presenter {
 
                             lifestyleResults += jsonArray.length();
                             if (index == 9){
-                                mView.setLifestyleAvg(essentialsResults/5);
+                                mView.setLifestyleAvg(lifestyleResults/5);
 
 
                                 if (category != null && PropertyType != null && !location.equals("")){
@@ -214,7 +219,6 @@ public class NewPropertyPresenter implements NewPropertyContract.Presenter {
             }
         });
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
         requestQueue.add(stringRequest);
     }
@@ -285,5 +289,132 @@ public class NewPropertyPresenter implements NewPropertyContract.Presenter {
             });
         }
 
+    }
+
+
+    @Override
+    public void getAddress(String url) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Create an empty ArrayList that we can start adding mobiles to
+
+                try {
+                    // Create a JSONObject from the JSON response string
+                    JSONObject baseJsonResponse = new JSONObject(response);
+                    JSONArray baseJsonArray, jsonArray;
+
+                    baseJsonArray = baseJsonResponse.getJSONArray("results");
+
+
+                    if (!NewPropertyPresenter.this.selectAddress(baseJsonArray, "RANGE_INTERPOLATED")) {
+                        if (!NewPropertyPresenter.this.selectAddress(baseJsonArray, "ROOFTOP")) {
+                            if (!NewPropertyPresenter.this.selectAddress(baseJsonArray, "GEOMETRIC_CENTER")) {
+                                if (!NewPropertyPresenter.this.selectAddress(baseJsonArray, "APPROXIMATE")) {
+                                    mView.showMessage("no Address selected");
+                                }
+                            }
+                        }
+                    }
+
+                } catch (JSONException e) {
+
+                    mView.showMessage(e.getMessage());
+
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String message = null;
+                if (error instanceof NetworkError) {
+                    message = "Cannot connect to Internet...Please check your connection!";
+                } else if (error instanceof ServerError) {
+                    message = "The server could not be found. Please try again after some time!!";
+                } else if (error instanceof AuthFailureError) {
+                    message = "Cannot connect to Internet...Please check your connection!";
+                } else if (error instanceof ParseError) {
+                    message = "Parsing error! Please try again after some time!!";
+                } else if (error instanceof TimeoutError) {
+                    message = "Connection TimeOut! Please check your internet connection.";
+                }
+
+
+                mView.showMessage(message);
+
+            }
+        });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+
+        requestQueue.add(stringRequest);
+    }
+
+    public boolean selectAddress(JSONArray baseJsonArray, String type) throws JSONException {
+        JSONArray jsonArray;
+        boolean selected = false;
+        for (int j = 0; j < baseJsonArray.length(); j++){
+
+            jsonArray = baseJsonArray.getJSONObject(j).getJSONArray("address_components");
+
+            String locationType = baseJsonArray.getJSONObject(j).getJSONObject("geometry").getString("location_type");
+
+
+            String formattedAddress = baseJsonArray.getJSONObject(j).getString("formatted_address");
+
+
+            if (locationType.equals(type)){
+
+                getAddress(jsonArray, formattedAddress);
+
+                selected =  true;
+                break;
+            }
+
+        }
+
+        return selected;
+    }
+
+    public void getAddress(JSONArray jsonArray, String formattedAddress) throws JSONException {
+
+
+        String city = "", area = "";
+        boolean correctAddress = false;
+
+        for (int i = 0; i < jsonArray.length(); i++){
+
+
+            JSONArray typeJSONArray = jsonArray.getJSONObject(i).getJSONArray("types");
+
+            switch (typeJSONArray.getString(0)){
+                case "country":
+
+                    correctAddress = jsonArray.getJSONObject(i).getString("long_name").equals("Egypt");
+
+                    break;
+
+                case "administrative_area_level_2":
+                    area = jsonArray.getJSONObject(i).getString("long_name");
+                    break;
+                case "administrative_area_level_1":
+                    city = jsonArray.getJSONObject(i).getString("long_name");
+                    break;
+
+            }
+
+
+
+        }
+
+        if (correctAddress){
+
+
+            mView.setAddress(formattedAddress, area, city);
+
+        }else {
+            mView.showMessage("Select address in Egypt");
+        }
     }
 }

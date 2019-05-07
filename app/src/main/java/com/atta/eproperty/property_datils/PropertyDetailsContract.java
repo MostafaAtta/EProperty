@@ -1,7 +1,5 @@
 package com.atta.eproperty.property_datils;
 
-import com.android.volley.toolbox.StringRequest;
-
 import java.util.Date;
 
 public interface PropertyDetailsContract {
@@ -19,7 +17,7 @@ public interface PropertyDetailsContract {
 
         String formatDateTime(Date dateObject);
 
-        String getUrl(double latitude , double longitude , String nearbyPlace);
+        String getUrl(String nearbyPlace);
 
         void showMessage(String message);
 
@@ -28,13 +26,21 @@ public interface PropertyDetailsContract {
         void setFavId(int id);
 
         void setDialog();
+
+        void setSaleAvgPrice(int price);
+
+        void setRentAvgPrice(int price);
+
+        void setLifestyleAvg(int length);
+
+        void setEssentialsAvg(int length);
     }
 
     interface Presenter{
 
-        void requestPlaces(String[] url, final String type, final String[] place);
+        void requestPlaces(String[] urlEssentials, String[] urlLifestyle, String[] essentialsPlace, String[] lifestylePlace, String location, String type, String category);
 
-        StringRequest createStringRequest(String url, String type, String place, boolean endText);
+        void createStringRequest(String url, String place, String type, int index, String location, String PropertyType, String category);
 
         void setResult(String result, String type, String place);
 
@@ -43,5 +49,7 @@ public interface PropertyDetailsContract {
         void removeFromFav(int fId);
 
         void checkIfFav(int propertyId, int userId);
+
+        void getAvgPrice(String location, String type, String category);
     }
 }

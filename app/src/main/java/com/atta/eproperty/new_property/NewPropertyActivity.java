@@ -333,22 +333,39 @@ public class NewPropertyActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
+
+    @Override
+    public void setAddress(String formattedAddress, String area, String city) {
+
+
+        addressText.setText(formattedAddress);
+        districtText.setText(area);
+
+        //String[] cityFirstName = city.split(" ");
+
+        //int spinnerPosition = cities.indexOf(cityFirstName[0]) + 1;
+        //citySpinner.setSelection(spinnerPosition);
+
+
+        calculateAvgPrice();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
-                district = data.getStringExtra("district");
-                address = data.getStringExtra("address");
                 String lat = data.getStringExtra("latitude");
                 latitude = Float.parseFloat(lat);
                 String lon = data.getStringExtra("longitude");
                 longitude = Float.parseFloat(lon);
-                addressText.setText(data.getStringExtra("address"));
-                districtText.setText(data.getStringExtra("district"));
 
 
-                calculateAvgPrice();
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + data.getStringExtra("latitude") + "," +
+                        data.getStringExtra("longitude") + "&key=AIzaSyBdDl7JNwsC7AuxuDh-ZvwL2pWpW8uBr2E";
+
+                newPropertyPresenter.getAddress(url);
+
 
 
             }

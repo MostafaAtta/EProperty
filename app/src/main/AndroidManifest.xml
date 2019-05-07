@@ -52,10 +52,6 @@
         </activity>
 
         <activity
-            android:name=".ChangeLanguage"
-            android:label="@string/title_activity_main">
-        </activity>
-        <activity
             android:name=".new_property.NewPropertyActivity"
             android:label="New Property" />
         <activity
