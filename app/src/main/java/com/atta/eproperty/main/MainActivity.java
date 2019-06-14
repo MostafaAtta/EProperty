@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     MainPresenter mainPresenter;
 
     Dialog loginDialog;
+
+    int menuItemId;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
 
+        menuItemId = menuItem.getItemId();
         switch (menuItem.getItemId()) {
             case R.id.navigation_search:
                 fragment = new SearchFragment();
@@ -227,5 +231,30 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if (menuItemId == R.id.navigation_search) {
+            getMenuInflater().inflate(R.menu.main_menu, menu);
+            return true;
+        }else return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.filter) {
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

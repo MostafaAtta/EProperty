@@ -57,6 +57,17 @@
         <item>Garage</item>
     </string-array>
 
+
+    <string-array name="types2">
+        <item>Select The type</item>
+        <item>Apartment</item>
+        <item>Villa</item>
+        <item>Chalet</item>
+        <item>Land</item>
+        <item>Building</item>
+        <item>Garage</item>
+    </string-array>
+
     <string-array name="levels">
         <item>Number of levels</item>
         <item>1</item>

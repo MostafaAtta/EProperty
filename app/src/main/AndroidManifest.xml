@@ -18,7 +18,7 @@
         android:roundIcon="@drawable/real_estate"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".my_properties.MyPropertiesActivity"></activity>
+        <activity android:name=".my_properties.MyPropertiesActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -40,17 +40,14 @@
         <activity android:name=".register.RegisterActivity" />
         <activity
             android:name=".main.MainActivity"
+            android:theme="@style/AppTheme4"
             android:label="@string/title_activity_main">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".new_property.NewPropertyActivity"
             android:label="New Property" />

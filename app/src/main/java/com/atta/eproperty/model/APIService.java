@@ -76,6 +76,20 @@ public interface APIService {
     );
 
     @FormUrlEncoded
+    @POST("filter_properties")
+    Call<Properties> filterProperties(
+            @Field("min_price") int minPrice,
+            @Field("max_price") int mixPrice,
+            @Field("min_area") int minArea,
+            @Field("max_area") int maxArea,
+            @Field("district") String district,
+            @Field("city") String city,
+            @Field("type") String type,
+            @Field("category") String category
+    );
+
+
+    @FormUrlEncoded
     @POST("add_to_favorite")
     Call<PropertyResult> addToFavorite(
             @Field("property_id") int propertyId,

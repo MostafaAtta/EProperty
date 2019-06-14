@@ -69,4 +69,51 @@ public class SearchPresenter implements SearchContract.Presenter {
         });
     }
 
+    @Override
+    public void filterProperties(int minPrice, int mixPrice, int minArea, int maxArea, String district,
+                                 String city, String type, String category) {
+
+        //building retrofit object
+        Retrofit retrofit = new retrofit2.Retrofit.Builder()
+                .baseUrl(APIUrl.BASE_URL)
+                .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                .build();
+
+        //Defining retrofit api service
+        APIService service = retrofit.create(APIService.class);
+
+        //Defining the user object as we need to pass it with the call
+        //User user = new User(name, email, password, phone, birthdayString, locationSting);
+
+        //defining the call
+        Call<Properties> call = service.filterProperties(minPrice, mixPrice, minArea, maxArea, district,
+                city, type, category);
+
+        //calling the api
+        call.enqueue(new Callback<Properties>() {
+            @Override
+            public void onResponse(Call<Properties> call, Response<Properties> response) {
+
+                if (response.body() != null){
+
+                    if (response.body().getProperties() != null){
+
+                        ArrayList<Property> properties = response.body().getProperties();
+
+                        mView.showRecyclerView(properties);
+                    }
+                }else {
+                    mView.showError("An error");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Properties> call, Throwable t) {
+
+                mView.showError(t.getMessage());
+            }
+        });
+    }
+
 }

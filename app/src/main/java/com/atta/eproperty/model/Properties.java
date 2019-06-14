@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class Properties {
 
+    @SerializedName("error")
+    private Boolean error;
 
     @SerializedName("properties")
     private ArrayList<Property> properties;
@@ -20,6 +22,11 @@ public class Properties {
     public ArrayList<Property> getProperties() {
 
         return properties;
+    }
+
+
+    public Boolean getError() {
+        return error;
     }
 
 }
