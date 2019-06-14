@@ -140,7 +140,7 @@
         app:thumbNumber="2"
         app:stepsThumbsApart="5"
         app:drawThumbsApart="true"
-        app:scaleMin="500000"
+        app:scaleMin="2000"
         app:scaleMax="5000000"/>
 
 
@@ -177,8 +177,8 @@
         app:thumbNumber="2"
         app:stepsThumbsApart="5"
         app:drawThumbsApart="true"
-        app:scaleMin="500000"
-        app:scaleMax="5000000"/>
+        app:scaleMin="50"
+        app:scaleMax="500"/>
 
 
 
